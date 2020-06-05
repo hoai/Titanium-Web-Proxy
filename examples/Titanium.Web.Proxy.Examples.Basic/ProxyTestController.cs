@@ -90,6 +90,7 @@ namespace Titanium.Web.Proxy.Examples.Basic
             proxyServer.Start();
 
             proxyServer.UpStreamHttpProxy = new ExternalProxy() { HostName = "31.14.131.70", Port = 8080 };
+            proxyServer.UpStreamHttpsProxy = new ExternalProxy() { HostName = "31.14.131.70", Port = 8080 };
 
 
             // Transparent endpoint is useful for reverse proxy (client is not aware of the existence of proxy)
@@ -112,7 +113,11 @@ namespace Titanium.Web.Proxy.Examples.Basic
             //proxyServer.UpStreamHttpsProxy = new ExternalProxy("127.0.0.1", 1080)
             //    { ProxyType = ExternalProxyType.Socks5, UserName = "User1", Password = "Pass" };
 
-
+            /* add example case sock4/5 
+             *  proxyServer.UpStreamHttpProxy = new ExternalProxy("46.63.0.17", 4145) { ProxyType = ExternalProxyType.Socks4 };
+                proxyServer.UpStreamHttpsProxy = new ExternalProxy("46.63.0.17", 4145) { ProxyType = ExternalProxyType.Socks4 };
+             * 
+             * */
             //var socksEndPoint = new SocksProxyEndPoint(IPAddress.Any, 1080, true)
             //{
             //    // Generic Certificate hostname to use
