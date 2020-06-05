@@ -77,7 +77,8 @@ namespace Titanium.Web.Proxy.Examples.Basic
 
             //proxyServer.EnableWinAuth = true;
 
-            explicitEndPoint = new ExplicitProxyEndPoint(IPAddress.Any, 8000);
+            explicitEndPoint = new ExplicitProxyEndPoint(IPAddress.Parse("127.0.0.1"), 6100, false);//8000 IPAddress.Parse("127.0.0.1")
+
 
             // Fired when a CONNECT request is received
             explicitEndPoint.BeforeTunnelConnectRequest += onBeforeTunnelConnectRequest;
@@ -87,6 +88,9 @@ namespace Titanium.Web.Proxy.Examples.Basic
             // So client sends request in a proxy friendly manner
             proxyServer.AddEndPoint(explicitEndPoint);
             proxyServer.Start();
+
+            proxyServer.UpStreamHttpProxy = new ExternalProxy() { HostName = "31.14.131.70", Port = 8080 };
+
 
             // Transparent endpoint is useful for reverse proxy (client is not aware of the existence of proxy)
             // A transparent endpoint usually requires a network router port forwarding HTTP(S) packets or DNS

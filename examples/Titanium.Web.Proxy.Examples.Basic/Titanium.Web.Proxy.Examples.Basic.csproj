@@ -7,12 +7,8 @@
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Titanium.Web.Proxy\Titanium.Web.Proxy.csproj" />
+    <PackageReference Include="Titanium.Web.Proxy" Version="3.1.1301" />
   </ItemGroup>
 
 </Project>
