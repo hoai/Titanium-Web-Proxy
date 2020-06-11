@@ -180,15 +180,7 @@ namespace Titanium.Web.Proxy.Examples.Basic
             }
             else
             {
-                return new ExternalProxy
-                {
-                    BypassLocalhost = false,
-                    HostName = "31.14.131.70",
-                    Port = 8080,
-                    Password = "",
-                    UserName = "",
-                    UseDefaultCredentials = false
-                };
+                return null;
             }
 
             
