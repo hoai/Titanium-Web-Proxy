@@ -173,16 +173,17 @@ namespace Titanium.Web.Proxy.Examples.Basic
 
             
             //await writeToConsole(arg.WebSession.Request.Headers);
-            if (arg.WebSession.Request.Headers.HeaderExists("X-Forwarded-Host"))
+            if (arg.WebSession.Request.Headers.HeaderExists("x-forwarded-host"))
             {
-                var host = arg.WebSession.Request.Headers.GetHeaders("X-Forwarded-Host")[0].Value;
-                var port = Int32.Parse(arg.WebSession.Request.Headers.GetHeaders("X-Forwarded-Port")[0].Value);
+                
+                var host = arg.WebSession.Request.Headers.GetHeaders("x-forwarded-host")[0].Value;
+                var port = Int32.Parse(arg.WebSession.Request.Headers.GetHeaders("x-forwarded-port")[0].Value);
 
                 return new ExternalProxy
                 {
                     BypassLocalhost = false,
-                    HostName = arg.WebSession.Request.Headers.GetHeaders("X-Forwarded-Host")[0].Value,
-                    Port = Int32.Parse(arg.WebSession.Request.Headers.GetHeaders("X-Forwarded-Port")[0].Value),
+                    HostName = arg.WebSession.Request.Headers.GetHeaders("x-forwarded-host")[0].Value,
+                    Port = Int32.Parse(arg.WebSession.Request.Headers.GetHeaders("x-forwarded-port")[0].Value),
                     Password = "",
                     UserName = "",
                     UseDefaultCredentials = false
@@ -224,7 +225,7 @@ namespace Titanium.Web.Proxy.Examples.Basic
         {
             string hostname = e.HttpClient.Request.RequestUri.Host;
             e.GetState().PipelineInfo.AppendLine(nameof(onBeforeTunnelConnectRequest) + ":" + hostname);
-            await writeToConsole("Tunnel to: " + hostname);
+            //await writeToConsole("Tunnel to: " + hostname);
 
             var clientLocalIp = e.ClientLocalEndPoint.Address;
             if (!clientLocalIp.Equals(IPAddress.Loopback) && !clientLocalIp.Equals(IPAddress.IPv6Loopback))
