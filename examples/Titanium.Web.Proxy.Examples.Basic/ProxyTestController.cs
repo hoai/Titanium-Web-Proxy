@@ -19,6 +19,7 @@ namespace Titanium.Web.Proxy.Examples.Basic
         private readonly ProxyServer proxyServer;
         private ExplicitProxyEndPoint explicitEndPoint;
 
+        [Obsolete]
         public ProxyTestController()
         {
             proxyServer = new ProxyServer();
@@ -55,7 +56,7 @@ namespace Titanium.Web.Proxy.Examples.Basic
             //};
 
             // this is just to show the functionality, provided implementations use junk value
-            //proxyServer.GetCustomUpStreamProxyFunc = onGetCustomUpStreamProxyFunc;
+            proxyServer.GetCustomUpStreamProxyFunc = OnGetCustomUpStreamProxyFunc;
             //proxyServer.CustomUpStreamProxyFailureFunc = onCustomUpStreamProxyFailureFunc;
 
             // optionally set the Certificate Engine
@@ -89,8 +90,8 @@ namespace Titanium.Web.Proxy.Examples.Basic
             proxyServer.AddEndPoint(explicitEndPoint);
             proxyServer.Start();
 
-            proxyServer.UpStreamHttpProxy = new ExternalProxy() { HostName = "31.14.131.70", Port = 8080 };
-            proxyServer.UpStreamHttpsProxy = new ExternalProxy() { HostName = "31.14.131.70", Port = 8080 };
+            //proxyServer.UpStreamHttpProxy = new ExternalProxy() { HostName = "31.14.131.70", Port = 8080 };
+            //proxyServer.UpStreamHttpsProxy = new ExternalProxy() { HostName = "31.14.131.70", Port = 8080 };
 
 
             // Transparent endpoint is useful for reverse proxy (client is not aware of the existence of proxy)
@@ -158,20 +159,39 @@ namespace Titanium.Web.Proxy.Examples.Basic
             //proxyServer.CertificateManager.RemoveTrustedRootCertificates();
         }
 
-        private async Task<IExternalProxy> onGetCustomUpStreamProxyFunc(SessionEventArgsBase arg)
+        [Obsolete]
+        private async Task<IExternalProxy> OnGetCustomUpStreamProxyFunc(SessionEventArgsBase arg)
         {
-            arg.GetState().PipelineInfo.AppendLine(nameof(onGetCustomUpStreamProxyFunc));
+            arg.GetState().PipelineInfo.AppendLine(nameof(OnGetCustomUpStreamProxyFunc));
 
-            // this is just to show the functionality, provided values are junk
-            return new ExternalProxy
+            
+            //await writeToConsole(arg.WebSession.Request.Headers);
+            if (arg.WebSession.Request.Headers.HeaderExists("X-Forwarded-Host"))
             {
-                BypassLocalhost = false,
-                HostName = "127.0.0.9",
-                Port = 9090,
-                Password = "fake",
-                UserName = "fake",
-                UseDefaultCredentials = false
-            };
+                return new ExternalProxy
+                {
+                    BypassLocalhost = false,
+                    HostName = arg.WebSession.Request.Headers.GetHeaders("X-Forwarded-Host")[0].Value,
+                    Port = Int32.Parse(arg.WebSession.Request.Headers.GetHeaders("X-Forwarded-Port")[0].Value),
+                    Password = "",
+                    UserName = "",
+                    UseDefaultCredentials = false
+                };
+            }
+            else
+            {
+                return new ExternalProxy
+                {
+                    BypassLocalhost = false,
+                    HostName = "31.14.131.70",
+                    Port = 8080,
+                    Password = "",
+                    UserName = "",
+                    UseDefaultCredentials = false
+                };
+            }
+
+            
         }
 
         private async Task<IExternalProxy> onCustomUpStreamProxyFailureFunc(SessionEventArgsBase arg)
@@ -271,12 +291,12 @@ namespace Titanium.Web.Proxy.Examples.Basic
 
             // store it in the UserData property
             // It can be a simple integer, Guid, or any type
-            //e.UserData = new CustomUserData()
-            //{
-            //    RequestHeaders = e.HttpClient.Request.Headers,
-            //    RequestBody = e.HttpClient.Request.HasBody ? e.HttpClient.Request.Body:null,
-            //    RequestBodyString = e.HttpClient.Request.HasBody? e.HttpClient.Request.BodyString:null
-            //};
+            /*e.UserData = new CustomUserData()
+            {
+                RequestHeaders = e.HttpClient.Request.Headers,
+                RequestBody = e.HttpClient.Request.HasBody ? e.HttpClient.Request.Body:null,
+                RequestBodyString = e.HttpClient.Request.HasBody? e.HttpClient.Request.BodyString:null
+            };*/
 
             ////This sample shows how to get the multipart form data headers
             //if (e.HttpClient.Request.Host == "mail.yahoo.com" && e.HttpClient.Request.IsMultipartFormData)
