@@ -19,11 +19,13 @@ namespace Titanium.Web.Proxy.Examples.Basic
         private readonly ProxyServer proxyServer;
         private ExplicitProxyEndPoint explicitEndPoint;
 
+        private readonly ProxyServer proxyLocal;
+
         [Obsolete]
         public ProxyTestController()
         {
             proxyServer = new ProxyServer();
-
+            proxyLocal = new ProxyServer();
             //proxyServer.EnableHttp2 = true;
 
             // generate root certificate without storing it in file system
@@ -65,6 +67,9 @@ namespace Titanium.Web.Proxy.Examples.Basic
 
             // optionally set the Root Certificate
             //proxyServer.CertificateManager.RootCertificate = new X509Certificate2("myCert.pfx", string.Empty, X509KeyStorageFlags.Exportable);
+
+            proxyLocal.AddEndPoint(new ExplicitProxyEndPoint(IPAddress.Any, 8001, true){});
+            proxyLocal.Start();
         }
 
         public void StartProxy()
@@ -155,6 +160,8 @@ namespace Titanium.Web.Proxy.Examples.Basic
 
             proxyServer.Stop();
 
+            proxyLocal.Stop();
+
             // remove the generated certificates
             //proxyServer.CertificateManager.RemoveTrustedRootCertificates();
         }
@@ -168,6 +175,9 @@ namespace Titanium.Web.Proxy.Examples.Basic
             //await writeToConsole(arg.WebSession.Request.Headers);
             if (arg.WebSession.Request.Headers.HeaderExists("X-Forwarded-Host"))
             {
+                var host = arg.WebSession.Request.Headers.GetHeaders("X-Forwarded-Host")[0].Value;
+                var port = Int32.Parse(arg.WebSession.Request.Headers.GetHeaders("X-Forwarded-Port")[0].Value);
+
                 return new ExternalProxy
                 {
                     BypassLocalhost = false,
@@ -180,7 +190,15 @@ namespace Titanium.Web.Proxy.Examples.Basic
             }
             else
             {
-                return null;
+                return new ExternalProxy
+                {
+                    BypassLocalhost = false,
+                    HostName = "127.0.0.1",
+                    Port = 8001,
+                    Password = "",
+                    UserName = "",
+                    UseDefaultCredentials = false
+                };
             }
 
             
